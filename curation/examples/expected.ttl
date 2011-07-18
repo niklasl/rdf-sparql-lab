@@ -5,10 +5,10 @@
 @prefix : <http://example.org/vocab#> .
 
 <http://example.org/> a sioc:Site;
-  :underConstruction true;
+  dct:title "The Website"@en;
   dct:created "2011-07-17"^^xsd:date;
   dct:creator <http://example.org/persons/doe>;
-  dct:title "The Website"@en .
+  :underConstruction true .
 
 <http://example.org/persons/doe> a foaf:Person;
   foaf:homepage <file:///persons/doe.html> .
