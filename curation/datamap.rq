@@ -1,0 +1,38 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX map: <http://www.w3.org/ns/rdf/map#>
+
+CONSTRUCT {
+  ?subject ?property ?value .
+} WHERE {
+
+  GRAPH <data.ttl> {
+    ?subject ?givenProperty ?givenValue .
+  }
+
+  OPTIONAL {
+    ?givenProperty a map:ProxyProperty;
+      rdfs:subPropertyOf ?subProperty .
+    OPTIONAL {
+      ?givenProperty rdfs:subPropertyOf* [ rdfs:range ?range ] .
+    }
+    OPTIONAL {
+      ?givenProperty rdfs:subPropertyOf* [ a owl:ObjectProperty ] .
+      # TODO: This doesn't match in COALESCE below, at least not in ARQ..
+      #BIND(IRI(?givenValue) as ?iriValue)
+      BIND(true as ?asIRI) # .. using flag instead.
+    }
+  }
+  OPTIONAL {
+    ?givenValue a map:ProxyClass;
+      rdfs:subClassOf ?subTypeValue .
+  }
+
+  BIND(COALESCE(?subProperty, ?givenProperty) as ?property)
+  BIND(COALESCE(?subTypeValue,
+        IF(?asIRI, IRI(?givenValue), ?RAISE),
+        STRDT(?givenValue, ?range),
+        ?givenValue)
+      as ?value)
+
+}

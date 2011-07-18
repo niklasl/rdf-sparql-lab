@@ -1,0 +1,12 @@
+@prefix : <http://example.org/vocab#> .
+@base <http://example.org/> .
+
+<> a :Site;
+  :title "The Website"@en;
+  :created "2011-07-17";
+  :author </persons/doe>;
+  :underConstruction true .
+
+</persons/doe> a :Person;
+  :url "/persons/doe.html" .
+
