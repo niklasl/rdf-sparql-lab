@@ -11,7 +11,7 @@
 :underConstruction a rdf:Property .
 
 :Site a map:ProxyClass;
-  rdfs:subClassOf  sioc:Site .
+  rdfs:subClassOf sioc:Site .
 
 :title a map:ProxyProperty;
   rdfs:subPropertyOf dct:title .
@@ -23,8 +23,14 @@
   rdfs:subPropertyOf dct:created;
   rdfs:range xsd:date .
 
+:page a map:ProxyProperty;
+  owl:inverseOf sioc:has_space .
+
+:Page a map:ProxyClass;
+  rdfs:subClassOf foaf:Document .
+
 :Person a map:ProxyClass;
-  rdfs:subClassOf  foaf:Person .
+  rdfs:subClassOf foaf:Person .
 
 :url a map:ProxyProperty;
   rdfs:subPropertyOf foaf:homepage .

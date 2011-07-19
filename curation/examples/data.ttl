@@ -5,7 +5,14 @@
   :title "The Website"@en;
   :created "2011-07-17";
   :author </persons/doe>;
-  :underConstruction true .
+  :underConstruction true;
+  :page </index.html>, </persons/doe.html> .
+
+</index.html> a :Page;
+  :title "Welcome"@en .
+
+</persons/doe.html> a :Page;
+  :title "Doe's Page"@en .
 
 </persons/doe> a :Person;
   :url "/persons/doe.html" .

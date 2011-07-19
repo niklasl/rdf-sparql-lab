@@ -1,38 +1,46 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX map: <http://www.w3.org/ns/rdf/map#>
 
 CONSTRUCT {
-  ?subject ?property ?value .
+  ?subject ?property ?object .
 } WHERE {
 
   GRAPH <data.ttl> {
-    ?subject ?givenProperty ?givenValue .
+    ?givenSubject ?givenProperty ?givenObject .
   }
 
   OPTIONAL {
-    ?givenProperty a map:ProxyProperty;
-      rdfs:subPropertyOf ?subProperty .
+    ?givenProperty a map:ProxyProperty .
+      OPTIONAL {
+        ?givenProperty rdfs:subPropertyOf ?subProperty .
+      }
     OPTIONAL {
       ?givenProperty rdfs:subPropertyOf* [ rdfs:range ?range ] .
     }
     OPTIONAL {
       ?givenProperty rdfs:subPropertyOf* [ a owl:ObjectProperty ] .
       # TODO: This doesn't match in COALESCE below, at least not in ARQ..
-      #BIND(IRI(?givenValue) as ?iriValue)
+      #BIND(IRI(?givenObject) as ?iriValue)
       BIND(true as ?asIRI) # .. using flag instead.
+    }
+    OPTIONAL {
+      ?givenProperty owl:inverseOf ?reverseProperty .
     }
   }
   OPTIONAL {
-    ?givenValue a map:ProxyClass;
+    FILTER(?givenProperty = rdf:type)
+    ?givenObject a map:ProxyClass;
       rdfs:subClassOf ?subTypeValue .
   }
 
-  BIND(COALESCE(?subProperty, ?givenProperty) as ?property)
+  BIND(IF(BOUND(?reverseProperty), ?givenObject, ?givenSubject) as ?subject)
+  BIND(COALESCE(?reverseProperty, ?subProperty, ?givenProperty) as ?property)
   BIND(COALESCE(?subTypeValue,
-        IF(?asIRI, IRI(?givenValue), ?RAISE),
-        STRDT(?givenValue, ?range),
-        ?givenValue)
-      as ?value)
+        IF(?asIRI, IRI(?givenObject), ?RAISE),
+        STRDT(?givenObject, ?range),
+        IF(BOUND(?reverseProperty), ?givenSubject, ?givenObject))
+      as ?object)
 
 }

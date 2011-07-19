@@ -3,13 +3,22 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix sioc: <http://rdfs.org/sioc/ns#> .
 @prefix : <http://example.org/vocab#> .
+@base <http://example.org/> .
 
-<http://example.org/> a sioc:Site;
+<> a sioc:Site;
   dct:title "The Website"@en;
   dct:created "2011-07-17"^^xsd:date;
-  dct:creator <http://example.org/persons/doe>;
+  dct:creator </persons/doe>;
   :underConstruction true .
 
-<http://example.org/persons/doe> a foaf:Person;
+</index.html> a foaf:Document;
+  dct:title "Welcome"@en;
+  sioc:has_space <> .
+
+</persons/doe.html> a foaf:Document;
+  dct:title "Doe's Page"@en;
+  sioc:has_space <> .
+
+</persons/doe> a foaf:Person;
   foaf:homepage <file:///persons/doe.html> .
 
