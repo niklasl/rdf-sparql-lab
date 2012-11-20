@@ -1,0 +1,43 @@
+##
+# SPARQL CONSTRUCT implementation of RDFa Vocabulary Expansion.
+# See <http://www.w3.org/TR/rdfa-syntax/#s_vocab_expansion> .
+#
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+CONSTRUCT {
+
+  ?subject #?property ?object;
+    ?infproperty ?object;
+    ?property ?infobject .
+
+} WHERE {
+
+  ?subject ?property ?object .
+  #?document rdfa:usesVocabulary ?vocab .
+
+  {
+    GRAPH ?vocab {
+      {
+        ?property rdfs:subPropertyOf ?infproperty .
+      } UNION {
+        ?property owl:equivalentProperty ?infproperty .
+      } UNION {
+        ?infproperty owl:equivalentProperty ?property .
+      }
+    }
+  } UNION {
+    FILTER(?property = rdf:type)
+    GRAPH ?vocab {
+      {
+        ?object rdfs:subClassOf ?infobject .
+      } UNION {
+        ?object owl:equivalentClass ?infobject .
+      } UNION {
+        ?infobject owl:equivalentClass ?object .
+      }
+    }
+  }
+
+}
