@@ -1,0 +1,26 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <http://www.w3.org/ns/rdf/map#> .
+
+: a owl:Ontology;
+  rdfs:label "The Mapping Ontology"@en .
+
+:ProxyClass a owl:Class;
+  rdfs:subClassOf rdfs:Class;
+  rdfs:label "proxy class"@en;
+  rdfs:isDefinedBy : .
+
+:ProxyProperty a owl:Class;
+  rdfs:subClassOf rdf:Property;
+  rdfs:label "proxy property"@en;
+  rdfs:comment "A proxy property is a property which shares all the semantics of the thing it is a subproperty of, apart from being narrowed down for usage within a specific context."@en;
+  rdfs:subClassOf [ a owl:Restriction;
+    owl:onProperty rdfs:subPropertyOf;
+    owl:allValuesFrom [
+        rdfs:intersectionOf (rdf:Property [owl:disjointWith :ProxyProperty]);
+        rdfs:comment "Any property that isn't a proxy property."@en
+      ]
+    ];
+  rdfs:isDefinedBy : .
+
