@@ -1,0 +1,26 @@
+SPARQL Lab: Schema.org Tools
+========================================================================
+
+### Lint ##
+
+To run the schema.org linter report construct, first obtain a local copy of the
+schema.org data (for performance and to avoid being throttled):
+
+    $ pushd /tmp/ && curl -O http://schema.org/docs/schema_org_rdfa.html && popd
+
+Then run the `construct.py` tool against an URL or file:
+
+    $ python ../tools/construct.py lint.rq /tmp/schema_org_rdfa.html tests/lint/001-in.html
+
+The result of this example should be:
+
+    @prefix : <http://www.w3.org/ns/rdfa#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+    [] a :Warning; rdfs:label "Unknown class"@en; :context <http://schema.org/Persona> .
+
+    [] a :Warning; rdfs:label "Unknown property"@en; :context <http://schema.org/noname> .
+
+(Note: You may want to use e.g. Turtle extracts of the embedded RDFa data if you run
+this in a batch process or similar, to save time.)
+
