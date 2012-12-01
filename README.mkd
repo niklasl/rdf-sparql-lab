@@ -1,5 +1,73 @@
 SPARQL Lab
 ========================================================================
 
-A collection (incubator of you will) of ideas and experiments with SPARQL.
+This is a collection of experiments with
+[SPARQL](http://www.w3.org/TR/sparql11-query/).
+Herein you can find examples of:
+
+* Data *validation* of an input source against vocabulary data.
+* Data *expansion*, using RDFS/OWL rules implemented with SPARQL CONSTRUCT
+  (instead of reasoner algorithms).
+* Data *curation*, combining vocabulary data with common patterns and idioms.
+
+Most of these queries are designed to run against a dataset containing:
+
+* the default graph, providing background knowledge (mostly vocabulary data);
+* one named graph, representing the focal data to work with.
+
+
+## Usage ##
+
+A bunch of scripts in the `tools` directory can be used to run these queries
+locally, against either local or remote data sources.
+
+* The `construct.py` [Python](http://python.org/) script requires a recent
+  version of
+  [RDFLib](https://github.com/RDFLib/rdflib), plus the currently external
+  package for [RDFLib SPARQL 1.1](https://github.com/RDFLib/rdflib-sparql)
+  support. Usage:
+
+        $ tools/construct.py QUERY_FILE DEFAULT_SOURCE NAMED_SOURCE
+
+* The `construct.groovy` script requires [Groovy](http://groovy.codehaus.org/)
+  (it will download dependencies on e.g. [Sesame](http://www.openrdf.org/)
+  automatically using the [Grab](http://groovy.codehaus.org/Grape) feature).
+  Usage:
+
+        $ groovy tools/construct.groovy QUERY_FILE DEFAULT_SOURCE NAMED_SOURCE
+
+* Of course, you can also use e.g. [Jena
+  ARQ](http://jena.apache.org/documentation/query/index.html) to run queries
+  directly. Usage:
+
+        $ arq --query QUERY_FILE --graph DEFAULT_SOURCE --namedGraph NAMED_SOURCE
+
+* In principle, [roqet](http://librdf.org/rasqal/roqet.html), part of
+  [Redland](http://librdf.org/)'s [Rasqal](http://librdf.org/rasqal/) library
+  is also an excellent SPARQL tool. But I cannot currently guarantee that it
+  works properly with these queries.
+
+
+### Example: schema.org linter ##
+
+To run the schema.org linter report construct, first obtain a local copy of the
+schema.org data (for performance and to avoid being throttled):
+
+    $ cd /tmp/ && curl -O http://schema.org/docs/schema_org_rdfa.html
+
+Then run the `construct.py` tool against an URL or file:
+
+    $ python tools/construct.py schema.org/lint.rq /tmp/schema_org_rdfa.html schema.org/tests/lint/001-in.html
+
+The result of this example should be:
+
+    @prefix : <http://www.w3.org/ns/rdfa#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+    [] a :Warning; rdfs:label "Unknown class"@en; :context <http://schema.org/Persona> .
+
+    [] a :Warning; rdfs:label "Unknown property"@en; :context <http://schema.org/noname> .
+
+(Note: You may want to use e.g. Turtle extracts of the embedded RDFa data if you run
+this in a batch process or similar, to save time.)
 
