@@ -12,12 +12,18 @@ import org.openrdf.repository.sail.SailRepository
 import org.openrdf.sail.memory.MemoryStore
 import org.openrdf.query.QueryLanguage
 import org.openrdf.rio.RDFFormat
+import org.openrdf.rio.RDFParserRegistry
 import org.openrdf.rio.turtle.TurtleWriter
 import org.openrdf.model.Resource
+@Grab('rdfa:rdfa-sesame:0.1.0-SNAPSHOT')
+import rdfa.adapter.sesame.RDFaParserFactory
+
+rdfaParserFactory = new RDFaParserFactory()
+RDFParserRegistry.getInstance().add(rdfaParserFactory)
 
 void loadRdf(conn, source, inContext=false) {
     def file = new File(source)
-    def format = RDFFormat.forFileName(file.getName())
+    def format = RDFFormat.forFileName(file.getName()) ?: rdfaParserFactory.getRDFFormat()
     def contexts = inContext?
             [conn.valueFactory.createURI(file.toURI().toString())] : []
     file.withInputStream {
@@ -46,4 +52,3 @@ try {
 } finally {
     repo.shutDown()
 }
-
