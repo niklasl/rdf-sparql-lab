@@ -3,24 +3,34 @@ SPARQL Lab: Schema.org Tools
 
 ### Lint ##
 
-To run the schema.org linter report construct, first obtain a local copy of the
-schema.org data (for performance and to avoid being throttled):
+The `lint.rq` construct query creates a report on problematic schema.org usage.
+Specifically, it checks for properties and classes used with the schema.org
+vocabulary which are not defined.
+
+To run it, you should first obtain a local copy of the schema.org data (for
+performance and to avoid being throttled):
 
     $ pushd /tmp/ && curl -O http://schema.org/docs/schema_org_rdfa.html && popd
 
-Then run the `construct.py` tool against an URL or file:
+Then run the query against a dataset with the schema.org vocabulary in the
+default graph, and an URL or file to test in a named graph. You can use one of
+the tools in this repo, like:
 
     $ python ../tools/construct.py lint.rq /tmp/schema_org_rdfa.html tests/lint/001-in.html
 
-The result of this example should be:
+The report for this example should be equivalent to:
 
-    @prefix : <http://www.w3.org/ns/rdfa#> .
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix : <http://purl.org/net/schemarama#> .
+    @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
-    [] a :Warning; rdfs:label "Unknown class"@en; :context <http://schema.org/Persona> .
+    [] a :Warning;
+        :message "Property [1] not found in schema.org (used for [3] in [4])"@en;
+        :implicated (<http://schema.org/noname> _:bnode1 <file:///.../001-in.html>) .
 
-    [] a :Warning; rdfs:label "Unknown property"@en; :context <http://schema.org/noname> .
+    [] a :Warning;
+        :message "Class [1] not found in schema.org (used for [3] in [4])"@en;
+        :implicated (<http://schema.org/Persona> _:bnode1 <file:///.../001-in.html>) .
 
-(Note: You may want to use e.g. Turtle extracts of the embedded RDFa data if you run
-this in a batch process or similar, to save time.)
+(Note: You may want to use e.g. Turtle extracts of the embedded RDFa data to
+save time if you run this repeatedly.)
 

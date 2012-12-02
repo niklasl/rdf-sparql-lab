@@ -1,22 +1,24 @@
 prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-prefix rdfa: <http://www.w3.org/ns/rdfa#>
 prefix schema: <http://schema.org/>
+prefix : <http://purl.org/net/schemarama#>
 
 construct {
 
-    [] a rdfa:Warning; rdfs:label ?label; rdfa:context ?term
+    [] a :Warning;
+        :message ?message;
+        :implicated (?term ?thing ?doc) .
 
 } where {
 
     {
         graph ?doc { ?thing ?term ?value }
         filter not exists { ?term a rdf:Property }
-        bind("Unknown property"@en as ?label)
+        bind("Property [1] not found in schema.org (used for [3] in [4])"@en as ?message)
     } union {
         graph ?doc { ?thing a ?term }
         filter not exists { ?term a rdfs:Class }
-        bind("Unknown class"@en as ?label)
+        bind("Class [1] not found in schema.org (used for [3] in [4])"@en as ?message)
     }
     filter(strStarts(str(?term), str(schema:)))
 
