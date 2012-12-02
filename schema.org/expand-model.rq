@@ -1,0 +1,21 @@
+##
+# SPARQL CONSTRUCT based on the semantics of schema.org:s model property.
+#
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://schema.org/>
+
+CONSTRUCT {
+
+  ?s ?p ?o
+
+} WHERE {
+
+  {
+    ?s ?p ?o
+  } UNION {
+    ?s a :Product; :model [ a :ProductModel; ?p ?o ]
+    FILTER(?p != rdf:type)
+    FILTER NOT EXISTS { ?s ?p ?other }
+  }
+
+}
