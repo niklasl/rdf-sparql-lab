@@ -12,7 +12,7 @@ for i, source in enumerate(sources):
     ext = source.rsplit('.', 1)[-1] if '.' in source else None
     fmt = formats.get(ext) or 'rdfa'
     if i:
-        graph.parse(source, format=fmt)
+        graph.parse(source, rdflib.URIRef(source), format=fmt)
     else:
         graph.default_context.parse(source, format=fmt)
 query = open(query_source).read()
