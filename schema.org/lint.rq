@@ -14,11 +14,11 @@ construct {
     {
         graph ?doc { ?thing ?term ?value }
         filter not exists { ?term a rdf:Property }
-        bind("Property [1] not found in schema.org (used for [3] in [4])"@en as ?message)
+        bind("Property [1] not found in schema.org (used for [2] in [3])"@en as ?message)
     } union {
         graph ?doc { ?thing a ?term }
         filter not exists { ?term a rdfs:Class }
-        bind("Class [1] not found in schema.org (used for [3] in [4])"@en as ?message)
+        bind("Class [1] not found in schema.org (used for [2] in [3])"@en as ?message)
     }
     filter(strStarts(str(?term), str(schema:)))
 

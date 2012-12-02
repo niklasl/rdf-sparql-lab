@@ -24,11 +24,11 @@ The report for this example should be equivalent to:
     @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
     [] a :Warning;
-        :message "Property [1] not found in schema.org (used for [3] in [4])"@en;
+        :message "Property [1] not found in schema.org (used for [2] in [3])"@en;
         :implicated (<http://schema.org/noname> _:bnode1 <file:///.../001-in.html>) .
 
     [] a :Warning;
-        :message "Class [1] not found in schema.org (used for [3] in [4])"@en;
+        :message "Class [1] not found in schema.org (used for [2] in [3])"@en;
         :implicated (<http://schema.org/Persona> _:bnode1 <file:///.../001-in.html>) .
 
 (Note: You may want to use e.g. Turtle extracts of the embedded RDFa data to
