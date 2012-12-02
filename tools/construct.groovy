@@ -21,13 +21,14 @@ import rdfa.adapter.sesame.RDFaParserFactory
 rdfaParserFactory = new RDFaParserFactory()
 RDFParserRegistry.getInstance().add(rdfaParserFactory)
 
-void loadRdf(conn, source, inContext=false) {
-    def file = new File(source)
-    def format = RDFFormat.forFileName(file.getName()) ?: rdfaParserFactory.getRDFFormat()
+void loadRdf(conn, path, inContext=false) {
+    def source = (path =~ /^https?:/)? new URL(path) : new File(path)
+    def uri = source.toURI()
+    def format = RDFFormat.forFileName(path) ?: rdfaParserFactory.getRDFFormat()
     def contexts = inContext?
-            [conn.valueFactory.createURI(file.toURI().toString())] : []
-    file.withInputStream {
-        conn.add(it, file.toURI().toString(), format,
+            [conn.valueFactory.createURI(uri.toString())] : []
+    source.withInputStream {
+        conn.add(it, uri.toString(), format,
                 contexts as Resource[])
     }
 }
@@ -43,8 +44,8 @@ def repo = new SailRepository(new MemoryStore())
 repo.initialize()
 try {
     def conn = repo.getConnection()
-    args[1..args.length-1].eachWithIndex { src, i ->
-        loadRdf(conn, src, i>0)
+    args[1..args.length-1].eachWithIndex { path, i ->
+        loadRdf(conn, path, i>0)
     }
     def query = new File(args[0]).text
     runQuery(conn, query)
